@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Web3 Verification Pages</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script defer src="js/app.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+  <div class="max-w-2xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-2">Web3 Verification Pages</h1>
+    <p class="mb-6 text-gray-600">Create a public, tamper-proof certificate for any file — verified on Solana (devnet).</p>
+
+    <div class="bg-white rounded-2xl shadow p-6 space-y-4">
+      <label class="block">
+        <span class="text-sm font-medium">Choose a file</span>
+        <input id="fileInput" type="file" class="mt-2 block w-full" />
+      </label>
+
+      <button id="btnCreate" class="w-full rounded-xl py-3 bg-black text-white font-semibold">Create Verification</button>
+
+      <div id="status" class="text-sm text-gray-600"></div>
+
+      <div id="result" class="hidden border rounded-xl p-4">
+        <h2 class="font-semibold mb-2">Certificate created ✅</h2>
+        <div class="text-sm break-all">
+          <div><span class="font-medium">SHA-256:</span> <span id="hashOut"></span></div>
+          <div><span class="font-medium">Signature:</span> <span id="sigOut"></span></div>
+          <div class="mt-2">
+            <a id="explorerLink" class="underline" target="_blank" rel="noreferrer">View on Explorer</a>
+          </div>
+          <div class="mt-4">
+            <a id="certLink" class="inline-block rounded-lg px-4 py-2 bg-gray-900 text-white" target="_self">Open Certificate Page</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 text-sm">
+      <a href="verify.html" class="underline">Verify an existing file against a certificate</a>
+    </div>
+  </div>
+</body>
+</html>
