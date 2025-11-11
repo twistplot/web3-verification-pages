@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Verify File • Web3 Verification</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+  <div class="max-w-2xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-4">Verify a File</h1>
+
+    <div class="bg-white rounded-2xl shadow p-6 space-y-4">
+      <label class="block">
+        <span class="text-sm font-medium">Transaction signature</span>
+        <input id="sig" type="text" class="mt-2 block w-full border rounded-lg p-2" placeholder="Paste signature" />
+      </label>
+
+      <label class="block">
+        <span class="text-sm font-medium">File to verify</span>
+        <input id="file" type="file" class="mt-2 block w-full" />
+      </label>
+
+      <button id="btn" class="w-full rounded-xl py-3 bg-black text-white font-semibold">Verify</button>
+
+      <div id="out" class="text-sm"></div>
+    </div>
+  </div>
+
+  <script>
+    const urlSig = new URL(location.href).searchParams.get("sig");
+    if (urlSig) document.getElementById("sig").value = urlSig;
+
+    async function sha256(file) {
+      const buf = await file.arrayBuffer();
+      const hash = await crypto.subtle.digest("SHA-256", buf);
+      return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+    }
+
+    document.getElementById("btn").addEventListener("click", async () => {
+      const sig = document.getElementById("sig").value.trim();
+      const file = document.getElementById("file").files[0];
+      const out = document.getElementById("out");
+      out.textContent = "Checking…";
+
+      if (!sig || !file) { out.textContent = "Provide signature and file."; return; }
+
+      const localHash = await sha256(file);
+      const r = await fetch(`/api/get-memo?sig=${encodeURIComponent(sig)}`);
+      if (!r.ok) { out.textContent = "Transaction not found."; return; }
+      const data = await r.json();
+      const memo = data.memo || "";
+      const onchain = memo.startsWith("VERIFY:") ? memo.slice(7) : null;
+
+      if (onchain && onchain.toLowerCase() === localHash.toLowerCase()) {
+        out.innerHTML = `✅ Match!<br>SHA-256: <code>${localHash}</code>`;
+      } else {
+        out.innerHTML = `❌ No match.<br>Your hash: <code>${localHash}</code><br>On-chain: <code>${onchain || "—"}</code>`;
+      }
+    });
+  </script>
+</body>
+</html>
