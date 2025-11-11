@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Certificate • Web3 Verification</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+  <div class="max-w-2xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-4">Blockchain Certificate</h1>
+    <div id="card" class="bg-white rounded-2xl shadow p-6 space-y-3">
+      <div><span class="font-medium">Status:</span> <span id="status">Loading…</span></div>
+      <div class="break-all"><span class="font-medium">Signature:</span> <span id="sig"></span></div>
+      <div class="break-all"><span class="font-medium">Memo:</span> <span id="memo"></span></div>
+      <div class="break-all"><span class="font-medium">SHA-256:</span> <span id="hash"></span></div>
+      <div><span class="font-medium">Timestamp:</span> <span id="ts"></span></div>
+      <div class="pt-2">
+        <a id="explorer" class="underline" target="_blank" rel="noreferrer">View on Solana Explorer</a>
+      </div>
+    </div>
+
+    <div class="mt-6 text-sm">
+      <a id="verifyLink" class="underline">Verify a file against this certificate</a>
+    </div>
+  </div>
+
+  <script>
+    function qs(name){ return new URL(location.href).searchParams.get(name) }
+    const sig = qs("sig"); const hash = qs("hash");
+    document.getElementById("sig").textContent = sig || "—";
+    document.getElementById("hash").textContent = hash || "—";
+    document.getElementById("explorer").href = `https://explorer.solana.com/tx/${sig}?cluster=devnet`;
+    document.getElementById("verifyLink").href = `verify.html?sig=${encodeURIComponent(sig)}`;
+
+    (async () => {
+      const r = await fetch(`/api/get-memo?sig=${encodeURIComponent(sig)}`);
+      if (!r.ok) { document.getElementById("status").textContent = "Not found"; return; }
+      const data = await r.json();
+      document.getElementById("memo").textContent = data.memo || "—";
+      if (data.blockTime) {
+        const d = new Date(data.blockTime * 1000);
+        document.getElementById("ts").textContent = d.toISOString();
+      } else {
+        document.getElementById("ts").textContent = "—";
+      }
+      document.getElementById("status").textContent = "Verified on-chain";
+    })();
+  </script>
+</body>
+</html>
