@@ -1,0 +1,15 @@
+[build]
+  command = "npm run build"
+  publish = "src"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/record"
+  to = "/.netlify/functions/record"
+  status = 200
+
+[[redirects]]
+  from = "/api/get-memo"
+  to = "/.netlify/functions/get-memo"
+  status = 200
+  
