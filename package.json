@@ -1,0 +1,13 @@
+{
+  "name": "web3-verification-pages",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo \"No build step\"",
+    "start": "netlify dev"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.95.0"
+  },
+  "devDependencies": {}
+}
